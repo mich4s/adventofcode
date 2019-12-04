@@ -16,30 +16,52 @@ func createIntArray(input int) []int {
 	return response
 }
 
+func validateDuplicationCriteria(digits []int) bool {
+	for index := range digits {
+		if index < len(digits)-2 {
+			nextValue := digits[index+1]
+			thirdValue := digits[index+2]
+			if digits[index] == nextValue && digits[index] != thirdValue {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func validateDuplicationOnlyTwoCriteria(digits []int) bool {
+	// This is lame as fck...
+	return digits[0] == digits[1] && digits[1] != digits[2] ||
+		digits[0] != digits[1] && digits[1] == digits[2] && digits[2] != digits[3] ||
+		digits[1] != digits[2] && digits[2] == digits[3] && digits[3] != digits[4] ||
+		digits[2] != digits[3] && digits[3] == digits[4] && digits[4] != digits[5] ||
+		digits[3] != digits[4] && digits[4] == digits[5]
+}
+
+func validateDecreasingCriteria(digits []int) bool {
+	for index := range digits {
+		if index < len(digits)-2 {
+			nextValue := digits[index+1]
+			if nextValue < digits[index] {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func validateSingleNumber(number int) bool {
 	numbers := createIntArray(number)
-	flag := false
-	for index := range numbers {
-		if index < len(numbers)-2 {
-			nextValue := numbers[index+1]
-			if numbers[index] == nextValue {
-				flag = true
-			}
-		}
-	}
-	if !flag {
+	if !validateDecreasingCriteria(numbers) {
 		return false
 	}
-	for index := range numbers {
-		if index < len(numbers)-2 {
-			nextValue := numbers[index+1]
-			if nextValue < numbers[index] {
-				flag = false
-				break
-			}
-		}
+	if !validateDuplicationCriteria(numbers) {
+		return false
 	}
-	return flag
+	if !validateDuplicationOnlyTwoCriteria(numbers) {
+		return false
+	}
+	return true
 }
 
 func calculate(from int, to int) int {
@@ -54,7 +76,5 @@ func calculate(from int, to int) int {
 
 func main() {
 	response := calculate(278384, 824795)
-	// response := calculate(278384, 300084)
-	// response := calculate(299999, 300000)
 	fmt.Println(response)
 }
